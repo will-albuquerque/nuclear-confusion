@@ -1,19 +1,28 @@
-"""This module provides classes and methods to produce terrain"""
+'''This module provides classes and methods to produce terrain'''
 
-from typing import NamedTuple
+class Hex:
+    def __init__(self, i, j, k):
+        if i + j + k != 0:
+            print(i, j, k)
+            raise ValueError('i, j, k do not sum to 0')
+        self.i = i
+        self.j = j
+        self.k = k
 
-class Hex(NamedTuple):
-    """Hex represents a hexagon on a hexagonal co-ordinate system"""
-    i: int
-    j: int
-    k: int
-
-def generate_hexes(max_i, max_j, max_k):
-    """generate_hexes creates a set of hexes"""
-    hexes = set()
-    for i in range(max_i):
-        for j in range(max_j):
-            for k in range(max_k):
-                hexes.add(Hex(i, j, k))
-
-    return hexes
+class HexGrid:
+    def __init__(self, max_radius):
+        self.max_radius = max_radius
+        self.hexes = set()
+        x = 0
+        y = 0
+        x_in = 0
+        z_in = 0
+        for i in range(max_radius):
+            x_in = i
+            z_in = -i
+            x = x_in
+            y = 0
+            for j in range(max_radius):
+                self.hexes.add(Hex(x, y, z_in))
+                x += 1
+                y -= 1

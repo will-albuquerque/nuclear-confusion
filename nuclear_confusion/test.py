@@ -1,6 +1,4 @@
-"""This module tests nuclear_confusion"""
-
-from terrain import Hex
+from terrain import HexGrid
 from visualisation import display_graph
 
-display_graph([Hex(0, 0, 0), Hex(1, 0, 0)])
+display_graph(HexGrid(7))

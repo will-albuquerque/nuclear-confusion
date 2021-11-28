@@ -1,13 +1,12 @@
 '''This module provides functions to visualise the terrain'''
 
-from typing import List
-from terrain import Hex
+from terrain import Hex, HexGrid
 from matplotlib.patches import RegularPolygon
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-def display_graph(hexes: List[Hex]):
+def display_graph(hex_grid: HexGrid):
     '''display_graph displays a colour map'''
 
     # Define plot figure and axes
@@ -15,10 +14,10 @@ def display_graph(hexes: List[Hex]):
     ax.set_aspect('equal')
 
     # Add hexagons
-    for i, j, k in hexes:
+    for h in hex_grid.hexes:
         # Convert from hexagonal co-ordinate to cartesian co-ordinate
-        x = j * np.sqrt(3) / 2 - k * np.sqrt(3) / 2
-        y = i + j / 2 + k / 2
+        x = h.j * np.sqrt(3) / 2 - h.k * np.sqrt(3) / 2
+        y = h.i + h.j / 2 + h.k / 2
 
         # Create hexagon
         hexagon = RegularPolygon((x,y),
