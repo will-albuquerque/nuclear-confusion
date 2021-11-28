@@ -2,6 +2,8 @@
 
 from perlin_noise import PerlinNoise
 from enum import Enum
+from random import choice
+from math import e
 
 class Hex:
     def __init__(self, i, j, k):
@@ -68,3 +70,43 @@ def create_colour_map(terrain_map):
         else:
             colour_map[co_ord] = 'grey'
     return colour_map
+
+def neighbours(co_ord):
+    i, j, k = co_ord.i, co_ord.j, co_ord.k
+
+    a = Hex(i + 1, j - 1, k)
+    b = Hex(i + 1, j, k - 1)
+
+    c = Hex(i, j + 1, k - 1)
+    d = Hex(i - 1, j + 1, k)
+
+    e = Hex(i - 1, j, k + 1)
+    f = Hex(i, j - 1, k + 1)
+
+    return a, b, c, d, e, f
+
+def radiation_spread(terrain_map, rad, co_ord_1, co_ord_2):
+    k = 1
+    terrain_1 = terrain_map[co_ord_1]
+    terrain_2 = terrain_map[co_ord_2]
+    if terrain_1 >= terrain_2:
+        return rad * pow(e, -k)
+    constant = terrain_2.value - terrain_2.value + 2
+    return rad * pow(e, -constant)
+
+def create_radiation_map(terrain_map):
+    radiation_map = {co_ord: 0 for co_ord in terrain_map.keys()}
+
+    source = choice(list(radiation_map.keys()))
+    radiation_map[source] = 100 # Initial radiation
+    seen = set()
+    to_be_calculated = [source]
+    while to_be_calculated:
+        co_ord = to_be_calculated.pop()
+        seen.add(co_ord)
+        for i in neighbours(co_ord):
+            if i not in seen:
+                radiation_map[i] += radiation_spread(terrain_map, radiation_map[co_ord], co_ord, i)
+                to_be_calculated.append(i)
+
+    return radiation_map
