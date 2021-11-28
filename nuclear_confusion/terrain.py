@@ -1,6 +1,7 @@
 '''This module provides classes and methods to produce terrain'''
 
 from perlin_noise import PerlinNoise
+from enum import Enum
 
 class Hex:
     def __init__(self, i, j, k):
@@ -29,15 +30,41 @@ class HexGrid:
                 x += 1
                 y -= 1
 
-def create_colour_map(hex_grid: HexGrid):
-    colour_map = {}
-    noise = PerlinNoise(octaves=3.5, seed=100)
-    for co_ord in hex_grid.hexes:
-        x = noise([co_ord.i, co_ord.j, co_ord.k])
-        print(x)
-        if x < 0.1:
-            colour_map[co_ord] = 'green'
-        else:
-            colour_map[co_ord] = 'red'
+class TerrainType(Enum):
+    WATER = 0
+    PLAIN = 1
+    HILL = 2
+    MOUNTAIN = 3
 
+def create_terrain_map(hex_grid: HexGrid):
+    terrain_map = {}
+    noise = PerlinNoise(octaves=1, seed=100)
+    for co_ord in hex_grid.hexes:
+        x = noise([co_ord.i / hex_grid.max_radius,
+                   co_ord.j / hex_grid.max_radius,
+                   co_ord.k / hex_grid.max_radius])
+        x *= 2
+        if x < 0.1:
+            terrain_map[co_ord] = TerrainType.WATER
+            continue
+        if x < 0.5:
+            terrain_map[co_ord] = TerrainType.PLAIN
+            continue
+        if x < 0.8:
+            terrain_map[co_ord] = TerrainType.HILL
+            continue
+        terrain_map[co_ord] = TerrainType.MOUNTAIN
+    return terrain_map
+
+def create_colour_map(terrain_map):
+    colour_map = {}
+    for co_ord, terrain_type in terrain_map.items():
+        if terrain_type is TerrainType.WATER:
+            colour_map[co_ord] = 'blue'
+        elif terrain_type is TerrainType.PLAIN:
+            colour_map[co_ord] = 'green'
+        elif terrain_type is TerrainType.HILL:
+            colour_map[co_ord] = 'yellow'
+        else:
+            colour_map[co_ord] = 'grey'
     return colour_map
