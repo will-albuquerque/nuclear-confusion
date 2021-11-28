@@ -1,5 +1,7 @@
 '''This module provides classes and methods to produce terrain'''
 
+from perlin_noise import PerlinNoise
+
 class Hex:
     def __init__(self, i, j, k):
         if i + j + k != 0:
@@ -26,3 +28,16 @@ class HexGrid:
                 self.hexes.add(Hex(x, y, z_in))
                 x += 1
                 y -= 1
+
+def create_colour_map(hex_grid: HexGrid):
+    colour_map = {}
+    noise = PerlinNoise(octaves=3.5, seed=100)
+    for co_ord in hex_grid.hexes:
+        x = noise([co_ord.i, co_ord.j, co_ord.k])
+        print(x)
+        if x < 0.1:
+            colour_map[co_ord] = 'green'
+        else:
+            colour_map[co_ord] = 'red'
+
+    return colour_map
