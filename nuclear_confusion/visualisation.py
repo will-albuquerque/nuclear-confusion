@@ -17,15 +17,13 @@ def display_graph(hexes: List[Hex]):
     # Add hexagons
     for i, j, k in hexes:
         # Convert from hexagonal co-ordinate to cartesian co-ordinate
-        x = i
-
-        # Cheeky bit of trigonometry
-        y = 2.0 * np.sin(np.radians(60)) * (j - k) / 3.0
+        x = j * np.sqrt(3) / 2 - k * np.sqrt(3) / 2
+        y = i + j / 2 + k / 2
 
         # Create hexagon
         hexagon = RegularPolygon((x,y),
                                  numVertices=6,
-                                 radius=2.0/3.0,
+                                 radius=np.sqrt(3) / 3.0,
                                  orientation=np.radians(30),
                                  facecolor='red',
                                  alpha=0.2,
